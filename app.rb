@@ -2,19 +2,24 @@ require 'json'
 require 'redis'
 require 'sinatra'
 
+configure do
+  uri = URI.parse(ENV["REDISTOGO_URL"])
+  REDIS = Redis.new(:host => uri.host, :port => uri.port, :password => uri.password)
+end
+
 get %r{^/(\d{1,15})$} do |number|
-  redis = Redis.new
+  REDIS = Redis.new
   prefixes = []
-  prices = redis.pipelined do
+  prices = REDIS.pipelined do
     number.tap do |n|
-      redis.get (prefixes << n.dup).last
+      REDIS.get (prefixes << n.dup).last
     end.chop! until number.empty?
   end
   index = prices.find_index {|p| !p.nil?}
   return 400 if index.nil?
   price = prices[index]
   prefix = prefixes[index]
-  countries = redis.sget prefix
+  countries = REDIS.sget prefix
   content_type :json
   {countries: countries, price: price}.to_json
 end
