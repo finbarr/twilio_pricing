@@ -27,9 +27,10 @@ countries.each do |alpha2|
         prefixes = data[2].text.strip.split(',').map(&:strip)
         prefixes.each do |prefix|
           redis.set prefix, "#{price}"
-          redis.sadd "countries:#{prefix}", "#{alpha2}:#{country}"
+          serialized_country = "#{alpha2}:#{country}"
           puts "#{prefix} => #{price}"
-          puts "countries:#{prefix} << #{alpha2}:#{country}"
+          redis.sadd "countries:#{prefix}", serialized_country
+          puts "countries:#{prefix} << #{serialized_country}"
         end
       end
     end
