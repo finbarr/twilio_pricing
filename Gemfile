@@ -1,7 +1,7 @@
-source 'https://rubygems.org'
-gem 'sinatra'
-gem 'redis'
-gem 'nokogiri'
-gem 'typhoeus'
+source :rubygems
 gem 'json'
-gem 'debugger'
+gem 'nokogiri'
+gem 'redis'
+gem 'sinatra'
+gem 'thin'
+gem 'typhoeus'
