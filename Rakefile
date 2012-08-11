@@ -6,8 +6,12 @@ COUNTRIES = %w{AD AE AF AG AI AL AM AO AQ AR AS AT AU AW AX AZ BA BB BD BE BF BG
 
 PRICING_URL = 'http://twilio.com/voice/pricing'
 
-URI.parse(ENV["REDISTOGO_URL"]).tap do |uri|
-  REDIS = Redis.new(:host => uri.host, :port => uri.port, :password => uri.password)
+if ENV['RACK_ENV'] == 'production'
+  URI.parse(ENV["REDISTOGO_URL"]).tap do |uri|
+    REDIS = Redis.new(:host => uri.host, :port => uri.port, :password => uri.password)
+  end
+else
+  REDIS = Redis.new
 end
 
 def scrape_twilio
@@ -28,12 +32,15 @@ def scrape_twilio
           country = data[0].text
           price = data[1].text
           prefixes = data[2].text.strip.split(',').map(&:strip)
-          prefixes.each do |prefix|
-            REDIS.set prefix, "#{price}"
-            serialized_country = "#{alpha2}:#{country}"
-            puts "#{prefix} => #{price}"
-            REDIS.sadd "countries:#{prefix}", serialized_country
-            puts "countries:#{prefix} << #{serialized_country}"
+          REDIS.pipelined do
+            prefixes.each do |prefix|
+              REDIS.sadd 'prefixes', prefix
+              REDIS.set prefix, "#{price.to_f / 100.0}"
+              serialized_country = "#{alpha2}:#{country}"
+              puts "#{prefix} => #{price}"
+              REDIS.sadd "countries:#{prefix}", serialized_country
+              puts "countries:#{prefix} << #{serialized_country}"
+            end
           end
         end
       end

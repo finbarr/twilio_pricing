@@ -3,8 +3,12 @@ require 'redis'
 require 'sinatra'
 
 configure do
-  uri = URI.parse(ENV["REDISTOGO_URL"])
-  REDIS = Redis.new(:host => uri.host, :port => uri.port, :password => uri.password)
+  if ENV['RACK_ENV'] == 'production'
+    uri = URI.parse(ENV["REDISTOGO_URL"])
+    REDIS = Redis.new(:host => uri.host, :port => uri.port, :password => uri.password)
+  else
+    REDIS = Redis.new
+  end
 end
 
 get %r{^/(\d{1,15})$} do |number|
@@ -18,7 +22,7 @@ get %r{^/(\d{1,15})$} do |number|
   return 400 if index.nil?
   price = prices[index]
   prefix = prefixes[index]
-  countries = REDIS.smembers(prefix).map do |country|
+  countries = REDIS.smembers("countries:#{prefix}").map do |country|
     alpha2, name = country.split(':')
     {
       alpha2: alpha2,
