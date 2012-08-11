@@ -1,0 +1,26 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Twilio Pricing</title>
+  </head>
+  <body>
+    <h1>Twilio Pricing</h1>
+    <h3>Request</h3>
+    <blockquote>
+      <code>GET twiliopricing.herokuapp.com/:number <br />
+      :number =~ /\d{1,15}/ <br /></code>
+    </blockquote>
+    <h3>Response</h3>
+    <blockquote>
+      <code>{"price":"0.02","countries":[{"alpha2":"IE","name":"Ireland"}]} <br />
+        returns 400 when number not found</code>
+    </blockquote>
+    <h3>Info</h3>
+    <ul>
+      <li>Prices extracted from twilio.com daily</li>
+      <li>Use these prices at your own risk</li>
+      <li>Input numbers are not validated</li>
+      <li>Countries are suggested but may not be accurate</li>
+    </ul>
+  </body>
+</html>

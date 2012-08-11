@@ -34,7 +34,7 @@ get %r{^/(\d{1,15})$} do |number|
 end
 
 get '/' do
-  "Twilio Pricing"
+  erb :index
 end
 
 get '*' do
