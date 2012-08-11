@@ -13,7 +13,7 @@ end
 def scrape_twilio
   COUNTRIES.each do |alpha2|
     begin
-      response = Typhoeus::Request.get("#{pricing_url}/#{alpha2}", follow_location: true)
+      response = Typhoeus::Request.get("#{PRICING_URL}/#{alpha2}", follow_location: true)
       if response.success?
         doc = Nokogiri::HTML(response.body)
         table = doc.search('#all-pricing table:first')
