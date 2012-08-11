@@ -30,7 +30,7 @@ get %r{^/(\d{1,15})$} do |number|
     }
   end
   content_type :json
-  {countries: countries, price: price}.to_json
+  {price: price, countries: countries}.to_json
 end
 
 get '/' do
