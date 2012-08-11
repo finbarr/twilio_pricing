@@ -8,7 +8,6 @@ configure do
 end
 
 get %r{^/(\d{1,15})$} do |number|
-  REDIS = Redis.new
   prefixes = []
   prices = REDIS.pipelined do
     number.tap do |n|
