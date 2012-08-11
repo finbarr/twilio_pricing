@@ -34,7 +34,6 @@ def scrape_twilio
           prefixes = data[2].text.strip.split(',').map(&:strip)
           REDIS.pipelined do
             prefixes.each do |prefix|
-              REDIS.sadd 'prefixes', prefix
               REDIS.set prefix, "#{price.to_f / 100.0}"
               serialized_country = "#{alpha2}:#{country}"
               puts "#{prefix} => #{price}"
