@@ -7,7 +7,7 @@ COUNTRIES = %w{AD AE AF AG AI AL AM AO AQ AR AS AT AU AW AX AZ BA BB BD BE BF BG
 PRICING_URL = 'http://twilio.com/voice/pricing'
 
 if ENV['RACK_ENV'] == 'production'
-  URI.parse(ENV["REDISTOGO_URL"]).tap do |uri|
+  URI.parse(ENV['REDISTOGO_URL']).tap do |uri|
     REDIS = Redis.new(:host => uri.host, :port => uri.port, :password => uri.password)
   end
 else
@@ -50,7 +50,7 @@ def scrape_twilio
   end
 end
 
-desc "Cron task"
+desc 'Cron tasks'
 task :cron do
   scrape_twilio
 end

@@ -4,8 +4,8 @@ require 'sinatra'
 
 configure do
   if ENV['RACK_ENV'] == 'production'
-    uri = URI.parse(ENV["REDISTOGO_URL"])
-    REDIS = Redis.new(:host => uri.host, :port => uri.port, :password => uri.password)
+    uri = URI.parse(ENV['REDISTOGO_URL'])
+    REDIS = Redis.new(host: uri.host, port: uri.port, password: uri.password)
   else
     REDIS = Redis.new
   end
@@ -24,10 +24,7 @@ get %r{^/(\d{1,15})$} do |number|
   prefix = prefixes[index]
   countries = REDIS.smembers("countries:#{prefix}").map do |country|
     alpha2, name = country.split(':')
-    {
-      alpha2: alpha2,
-      name: name
-    }
+    {alpha2: alpha2, name: name}
   end
   content_type :json
   {price: price, countries: countries}.to_json
