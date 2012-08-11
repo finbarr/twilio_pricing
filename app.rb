@@ -18,7 +18,13 @@ get %r{^/(\d{1,15})$} do |number|
   return 400 if index.nil?
   price = prices[index]
   prefix = prefixes[index]
-  countries = REDIS.sget prefix
+  countries = REDIS.members(prefix).map do |country|
+    alpha2, name = country.split(':')
+    {
+      alpha2: alpha2,
+      name: name
+    }
+  end
   content_type :json
   {countries: countries, price: price}.to_json
 end
